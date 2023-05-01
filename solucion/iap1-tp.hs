@@ -32,7 +32,6 @@ usuarioDePublicacion (u, _, _) = u
 likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
-
 -- nombresDeUsuarios recibe una redSocial valida y devuelve una lista con los nombres de los usuarios de la red social 
 -- donde no hay repetidos, es decir, si dos usuarios se llaman carlitos en la lista aparecerá una sola vez "carlitos".
 
@@ -41,7 +40,9 @@ nombresDeUsuarios ([], _, _) = []
 nombresDeUsuarios (u:us, rs, ps) | pertenece (nombreDeUsuario u) restoUsuarios = restoUsuarios
                                  | otherwise = (nombreDeUsuario u): restoUsuarios
                                  where restoUsuarios = nombresDeUsuarios (us, rs, ps)
-                                 
+
+
+
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
 pertenece e (x:xs) | e == x = True 
@@ -135,12 +136,12 @@ tieneUnSeguidorFiel (u:us, rs, ps) u1 | contenido publicacionesU1 (publicaciones
 -- Observacion : combinacionesPosibles es una lista de listas de usuarios que contiene todas las posibles maneras de agrupar usuarios.
 -- donde se distingue a [usuario1, usuario2, usuario3] de [usuario2, usuario1, usuario3]. 
 -- ¿Como funciona? realizo Partes de us (donde us es la lista de usuarios de la red) y de esta manera consigo todos los posibles subconjuntos
--- de us, y luego con permutaciones obtengo todas las maneras de ordenas esos subconjuntos.
+-- de us, y luego con permutarElementos obtengo todas las maneras de ordenar esos subconjuntos.
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 | (esCadenaDeAmigos combinacionesPosibles (u:us, rs, ps) u1 u2) = True
+existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 | (hayCadenaDeAmigos combinacionesPosibles (u:us, rs, ps) u1 u2) = True
                                              | otherwise = False
-                                             where combinacionesPosibles = aplanar (permutarElementos (partes (u:us)))
+                                             where combinacionesPosibles = permutarElementos (partes (u:us))
 
 -- Funciones auxiliares para existeSecuenciaDeAmigos --
 
@@ -149,7 +150,7 @@ existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 | (esCadenaDeAmigos combinacionesPo
 relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
 relacionadosDirecto u1 u2 red = pertenece u1 (amigosDe red u2) 
 
--- Recibe una lista de usuarios y si todos en la lista estan relacionados directamente devuelve True.
+-- cadenaDeAmigos recibe una lista de usuarios y si cada usuario de la lista se relaciona con el siguiente devuelve True.
 
 cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
 cadenaDeAmigos [_] _ = False
@@ -157,15 +158,17 @@ cadenaDeAmigos [u1,u2] red = relacionadosDirecto u1 u2 red
 cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos us red
                           | otherwise = False
 
--- esCadenadeAmigos recibe una lista de de listas de usuarios de una redSocial y la redSocial y devuelve True si alguna lista de
+-- hayCadenadeAmigos recibe una lista de de listas de usuarios de una redSocial y la redSocial y devuelve True si alguna lista de
 -- usuarios forma una cadena de amigos y ademas comienza con u1 y temina con u2.
 
-esCadenaDeAmigos :: [[Usuario]] -> RedSocial -> Usuario -> Usuario -> Bool
-esCadenaDeAmigos [[]] _ _ _ = False
-esCadenaDeAmigos (u:us) red u1 u2  | cadenaDeAmigos u red && (head u) == u1 && (ultimo u) == u2 = True
-                                   | otherwise = esCadenaDeAmigos us red u1 u2
-                                   where ultimo (x:xs) | (longitud xs == 0) = x
-                                                       | otherwise = ultimo xs
+hayCadenaDeAmigos :: [[Usuario]] -> RedSocial -> Usuario -> Usuario -> Bool
+hayCadenaDeAmigos [[]] _ _ _ = False
+hayCadenaDeAmigos (u:us) red u1 u2 | cadenaDeAmigos u red && empiezaConU1 && terminaConU2 = True
+                                   | otherwise = hayCadenaDeAmigos us red u1 u2
+                                    where empiezaConU1 = (head u) == u1
+                                          terminaConU2 = (ultimo u) == u2
+                                          ultimo (x:xs) | (longitud xs == 0) = x
+                                                        | otherwise = ultimo xs
 
 -- Defino la funcion partes para luego poder agrupar a los usuarios que reciba la funcion
 -- de todas las maneras posibles. Partes recibe una lista (xs) y devuelve una lista de listas con todos los subconjuntos de la lista xs
@@ -183,14 +186,14 @@ agregarATodos n (x:xs) = (n: x): agregarATodos n xs
 
 permutaciones :: (Eq t) => [t] -> [[t]]
 permutaciones [] = [[]]
-permutaciones xs = [e:p | e <- xs, p <- permutaciones (quitar e xs)]
+permutaciones xs = [e:perm | e <- xs, perm <- permutaciones (quitar e xs)]
 
 -- permutarElementos recibe una lista de listas de t y devuelve una lista de listas donde sus elementos son todas 
 -- las permutaciones posibles de cada lista de t. 
 
-permutarElementos :: (Eq t) => [[t]] -> [[[t]]]
-permutarElementos [[]] = [[[]]]
-permutarElementos (x:xs) = (permutaciones x): permutarElementos xs
+permutarElementos :: (Eq t) => [[t]] -> [[t]]
+permutarElementos [[]] = [[]]
+permutarElementos (x:xs) = (permutaciones x) ++ permutarElementos xs
 
 -- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista. (Como estoy trabajando con "conjuntos", cada elemento 
 -- va a aparecer una vez en la lista.)
@@ -199,13 +202,6 @@ quitar :: (Eq t) => t -> [t] -> [t]
 quitar _ [] = []
 quitar y (x:xs) | x == y = xs
                 | otherwise = x: quitar y xs
-
--- aplanar recibe una lista de lista de listas de t y devuelve una lista con las listas de tipo t. Es decir,
--- si recibe [[[1,2], [2,1]]] -> [[1,2], [2,1]]
-
-aplanar :: [[[t]]] -> [[t]]
-aplanar [[[]]] = [[]]
-aplanar (x:xs) = x ++ aplanar xs  
 
 
 
