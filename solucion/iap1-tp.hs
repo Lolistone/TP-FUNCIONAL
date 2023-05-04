@@ -41,8 +41,6 @@ nombresDeUsuarios (u:us, rs, ps) | pertenece (nombreDeUsuario u) restoUsuarios =
                                  | otherwise = (nombreDeUsuario u): restoUsuarios
                                  where restoUsuarios = nombresDeUsuarios (us, rs, ps)
 
-
-
 pertenece :: (Eq t) => t -> [t] -> Bool
 pertenece _ [] = False
 pertenece e (x:xs) | e == x = True 
@@ -139,8 +137,7 @@ tieneUnSeguidorFiel (u:us, rs, ps) u1 | contenido publicacionesU1 (publicaciones
 -- de us, y luego con permutarElementos obtengo todas las maneras de ordenar esos subconjuntos.
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 | (hayCadenaDeAmigos combinacionesPosibles (u:us, rs, ps) u1 u2) = True
-                                             | otherwise = False
+existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 = (hayCadenaDeAmigos combinacionesPosibles (u:us, rs, ps) u1 u2)
                                              where combinacionesPosibles = permutarElementos (partes (u:us))
 
 -- Funciones auxiliares para existeSecuenciaDeAmigos --
@@ -186,9 +183,31 @@ agregarATodos n (x:xs) = (n: x): agregarATodos n xs
 
 permutaciones :: (Eq t) => [t] -> [[t]]
 permutaciones [] = [[]]
-permutaciones xs = [e:perm | e <- xs, perm <- permutaciones (quitar e xs)]
+permutaciones (x:xs) = insertarEnCadaPosDeTodasLasListas (permutaciones xs) x
 
--- permutarElementos recibe una lista de listas de t y devuelve una lista de listas donde sus elementos son todas 
+-- Defino las funciones necesarias para hacer permutaciones --
+
+union :: (Eq t) => [t] -> [t] -> [t]
+union [] ys = ys
+union (x:xs) ys = union xs (agregar x ys)
+
+agregar :: (Eq t) => t -> [t] -> [t]
+agregar e l | pertenece e l = l
+            | otherwise = e:l
+
+insertarEn :: [t] -> t -> Int -> [t]
+insertarEn l e 0 = e:l
+insertarEn (x:xs) e n = x: (insertarEn xs e (n-1))
+
+insertarEnCadaPos :: (Eq t) => [t] -> t -> Int -> [[t]]
+insertarEnCadaPos l e 0 = agregar (insertarEn l e 0) []
+insertarEnCadaPos l e n = agregar (insertarEn l e n) (insertarEnCadaPos l e (n-1))
+
+insertarEnCadaPosDeTodasLasListas :: (Eq t) => [[t]] -> t -> [[t]]
+insertarEnCadaPosDeTodasLasListas [] e = []
+insertarEnCadaPosDeTodasLasListas (x:xs) e = union (insertarEnCadaPos x e (longitud x)) (insertarEnCadaPosDeTodasLasListas xs e)
+
+-- permutarElementos recibe una lista de listas de t y devuelve una lista de listas de t con todas 
 -- las permutaciones posibles de cada lista de t. 
 
 permutarElementos :: (Eq t) => [[t]] -> [[t]]
