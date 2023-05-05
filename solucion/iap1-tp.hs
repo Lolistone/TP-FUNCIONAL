@@ -131,61 +131,19 @@ tieneUnSeguidorFiel (u:us, rs, ps) u1 | contenido publicacionesU1 (publicaciones
 -- subconjunto de usuarios tales que su primer elemento sea u1, su ultimo elemento sea u2 y cada usuario se relacione
 -- con el siguiente.
 
--- Observacion : combinacionesPosibles es una lista de listas de usuarios que contiene todas las posibles maneras de agrupar usuarios.
--- donde se distingue a [usuario1, usuario2, usuario3] de [usuario2, usuario1, usuario3]. 
--- ¿Como funciona? realizo Partes de us (donde us es la lista de usuarios de la red) y de esta manera consigo todos los posibles subconjuntos
--- de us, y luego con permutarElementos obtengo todas las maneras de ordenar esos subconjuntos.
-
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
-existeSecuenciaDeAmigos (u:us, rs, ps) u1 u2 = (hayCadenaDeAmigos combinacionesPosibles (u:us, rs, ps) u1 u2)
-                                             where combinacionesPosibles = permutarElementos (partes (u:us))
+existeSecuenciaDeAmigos red u1 u2 = existeSecuenciaDeAmigosAUX red [u1] u2
 
--- Funciones auxiliares para existeSecuenciaDeAmigos --
+existeSecuenciaDeAmigosAUX :: RedSocial -> [Usuario] -> Usuario -> Bool
+existeSecuenciaDeAmigosAUX ([], _, _) u1 u2 = False
+existeSecuenciaDeAmigosAUX (_, [], _) u1 u2 = False
+existeSecuenciaDeAmigosAUX red u1 u2 | pertenece u2 (amigosDeVarios u1 red) = True
+                                     | otherwise = existeSecuenciaDeAmigosAUX (quitarTodosDeLaRed u1 red) (amigosDeVarios u1 red) u2
 
--- relacionadosDirecto recibe dos usuarios de una red y devuelve True si ambos son amigos.
-
-relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadosDirecto u1 u2 red = pertenece u1 (amigosDe red u2) 
-
--- cadenaDeAmigos recibe una lista de usuarios y si cada usuario de la lista se relaciona con el siguiente devuelve True.
-
-cadenaDeAmigos :: [Usuario] -> RedSocial -> Bool
-cadenaDeAmigos [_] _ = False
-cadenaDeAmigos [u1,u2] red = relacionadosDirecto u1 u2 red
-cadenaDeAmigos (u:us) red | relacionadosDirecto u (head us) red = cadenaDeAmigos us red
-                          | otherwise = False
-
--- hayCadenadeAmigos recibe una lista de de listas de usuarios de una redSocial y la redSocial y devuelve True si alguna lista de
--- usuarios forma una cadena de amigos y ademas comienza con u1 y temina con u2.
-
-hayCadenaDeAmigos :: [[Usuario]] -> RedSocial -> Usuario -> Usuario -> Bool
-hayCadenaDeAmigos [[]] _ _ _ = False
-hayCadenaDeAmigos (u:us) red u1 u2 | cadenaDeAmigos u red && empiezaConU1 && terminaConU2 = True
-                                   | otherwise = hayCadenaDeAmigos us red u1 u2
-                                    where empiezaConU1 = (head u) == u1
-                                          terminaConU2 = (ultimo u) == u2
-                                          ultimo (x:xs) | (longitud xs == 0) = x
-                                                        | otherwise = ultimo xs
-
--- Defino la funcion partes para luego poder agrupar a los usuarios que reciba la funcion
--- de todas las maneras posibles. Partes recibe una lista (xs) y devuelve una lista de listas con todos los subconjuntos de la lista xs
-
-partes :: [t] -> [[t]]
-partes [] = [[]]
-partes (x:xs) = agregarATodos x (partes xs) ++ partes xs
-
-agregarATodos :: t -> [[t]] -> [[t]]
-agregarATodos n [] = []
-agregarATodos n (x:xs) = (n: x): agregarATodos n xs
-
--- permutaciones recibe una lista (xs) y devuelve una lista con todas las permutaciones de xs. La defino con el fin de 
--- obtener todas las permutaciones de elementos de partes de A.
-
-permutaciones :: (Eq t) => [t] -> [[t]]
-permutaciones [] = [[]]
-permutaciones (x:xs) = insertarEnCadaPosDeTodasLasListas (permutaciones xs) x
-
--- Defino las funciones necesarias para hacer permutaciones --
+amigosDeVarios :: [Usuario] ->  RedSocial -> [Usuario]
+amigosDeVarios [] red = []
+amigosDeVarios [u] red = amigosDe red u
+amigosDeVarios (u:us) red = union (amigosDe red u) (amigosDeVarios us red)
 
 union :: (Eq t) => [t] -> [t] -> [t]
 union [] ys = ys
@@ -195,24 +153,10 @@ agregar :: (Eq t) => t -> [t] -> [t]
 agregar e l | pertenece e l = l
             | otherwise = e:l
 
-insertarEn :: [t] -> t -> Int -> [t]
-insertarEn l e 0 = e:l
-insertarEn (x:xs) e n = x: (insertarEn xs e (n-1))
+-- relacionadosDirecto recibe dos usuarios de una red y devuelve True si ambos son amigos.
 
-insertarEnCadaPos :: (Eq t) => [t] -> t -> Int -> [[t]]
-insertarEnCadaPos l e 0 = agregar (insertarEn l e 0) []
-insertarEnCadaPos l e n = agregar (insertarEn l e n) (insertarEnCadaPos l e (n-1))
-
-insertarEnCadaPosDeTodasLasListas :: (Eq t) => [[t]] -> t -> [[t]]
-insertarEnCadaPosDeTodasLasListas [] e = []
-insertarEnCadaPosDeTodasLasListas (x:xs) e = union (insertarEnCadaPos x e (longitud x)) (insertarEnCadaPosDeTodasLasListas xs e)
-
--- permutarElementos recibe una lista de listas de t y devuelve una lista de listas de t con todas 
--- las permutaciones posibles de cada lista de t. 
-
-permutarElementos :: (Eq t) => [[t]] -> [[t]]
-permutarElementos [[]] = [[]]
-permutarElementos (x:xs) = (permutaciones x) ++ permutarElementos xs
+relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
+relacionadosDirecto u1 u2 red = pertenece u2 (amigosDe red u1) 
 
 -- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista. (Como estoy trabajando con "conjuntos", cada elemento 
 -- va a aparecer una vez en la lista.)
@@ -222,7 +166,22 @@ quitar _ [] = []
 quitar y (x:xs) | x == y = xs
                 | otherwise = x: quitar y xs
 
+eliminarRelacionesDe :: Usuario -> [Relacion] -> [Relacion]
+eliminarRelacionesDe _ [] = []
+eliminarRelacionesDe u ((u1,u2):rs) | u == u1 || u == u2 = eliminarRelacionesDe u rs
+                                    | otherwise = (u1,u2): eliminarRelacionesDe u rs
 
+eliminarPublicacionesDe :: Usuario -> [Publicacion] -> RedSocial -> [Publicacion]
+eliminarPublicacionesDe _ [] _ = []
+eliminarPublicacionesDe u (p:ps) red | pertenece p (publicacionesDe red u) = eliminarPublicacionesDe u ps red
+                                     | otherwise = p: eliminarPublicacionesDe u ps red
+
+quitarDeLaRed :: Usuario -> RedSocial -> RedSocial
+quitarDeLaRed u (us, rs, ps) = (quitar u us, eliminarRelacionesDe u rs, eliminarPublicacionesDe u ps (us,rs,ps))
+
+quitarTodosDeLaRed :: [Usuario] -> RedSocial -> RedSocial
+quitarTodosDeLaRed [] red = red
+quitarTodosDeLaRed (u:us) red = quitarTodosDeLaRed us (quitarDeLaRed u red)
 
 usuario1 = (1, "Juan")
 usuario2 = (2, "Natalia")
