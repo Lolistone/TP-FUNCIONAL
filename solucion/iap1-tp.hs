@@ -37,14 +37,8 @@ likesDePublicacion (_, _, us) = us
 
 nombresDeUsuarios :: RedSocial -> [String]
 nombresDeUsuarios ([], _, _) = []
-nombresDeUsuarios (u:us, rs, ps) | pertenece (nombreDeUsuario u) restoUsuarios = restoUsuarios
-                                 | otherwise = (nombreDeUsuario u): restoUsuarios
+nombresDeUsuarios (u:us, rs, ps) = union [nombreDeUsuario u] restoUsuarios
                                  where restoUsuarios = nombresDeUsuarios (us, rs, ps)
-
-pertenece :: (Eq t) => t -> [t] -> Bool
-pertenece _ [] = False
-pertenece e (x:xs) | e == x = True 
-                   | otherwise = pertenece e xs
 
 -- La funcion amigosDe recibe una redSocial y un usario (ambos válidos, donde además el usuario pertenece a esa red), y devuelve una lista 
 -- con los usuarios que se relacionan con el.
@@ -158,6 +152,13 @@ union [] ys = ys
 union (x:xs) ys = union xs (agregar x ys)
                   where agregar e l | pertenece e l = l
                                     | otherwise = e:l
+
+-- pertenece recibe un elemento de tipo t y una lista de tipo t y devuelve True si este pertenece a la lista.
+
+pertenece :: (Eq t) => t -> [t] -> Bool
+pertenece _ [] = False
+pertenece e (x:xs) | e == x = True 
+                   | otherwise = pertenece e xs
 
 -- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista.
 
