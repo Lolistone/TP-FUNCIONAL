@@ -127,99 +127,70 @@ tieneUnSeguidorFiel (u:us, rs, ps) u1 | contenido publicacionesU1 (publicaciones
                                             red = (u:us, rs, ps)
                                             restoRed = (us, rs, ps)
 
--- existeSecuenciaDeAmigos recibe una redSocial y dos usuarios (u1 y u2) y devuelve True en caso de que exista un 
--- subconjunto de usuarios tales que su primer elemento sea u1, su ultimo elemento sea u2 y cada usuario se relacione
+-- existeSecuenciaDeAmigos recibe una redSocial y dos usuarios (u1 y u2) y devuelve True en caso de que exista una 
+-- subsecuencia de usuarios tales que su primer elemento sea u1, su ultimo elemento sea u2 y cada usuario se relacione
 -- con el siguiente.
 
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = existeSecuenciaDeAmigosAUX red [u1] u2
 
+-- existeSecuenciaDeAmigosAUX es precisamente una funcion auxiliar para existeSecuenciaDeAmigos que recibe una RedSocial, una lista 
+-- de usuarios us y un usuario u2, y devuelve True si algun usuario de us forma una cadena de amigos con u2.
+ 
 existeSecuenciaDeAmigosAUX :: RedSocial -> [Usuario] -> Usuario -> Bool
-existeSecuenciaDeAmigosAUX ([], _, _) u1 u2 = False
-existeSecuenciaDeAmigosAUX (_, [], _) u1 u2 = False
-existeSecuenciaDeAmigosAUX red u1 u2 | pertenece u2 (amigosDeVarios u1 red) = True
-                                     | otherwise = existeSecuenciaDeAmigosAUX (quitarTodosDeLaRed u1 red) (amigosDeVarios u1 red) u2
+existeSecuenciaDeAmigosAUX ([], _, _) us u2 = False
+existeSecuenciaDeAmigosAUX (_, [], _) us u2 = False
+existeSecuenciaDeAmigosAUX red us u2 | pertenece u2 (amigosDeVarios us red) = True
+                                     | otherwise = existeSecuenciaDeAmigosAUX (quitarTodosDeLaRed us red) (amigosDeVarios us red) u2
+
+-- amigosDeVarios recibe una lista de usuarios us y una redSocial y devuelve una lista con todos los amigos de los ususarios pertenecientes a us. 
 
 amigosDeVarios :: [Usuario] ->  RedSocial -> [Usuario]
 amigosDeVarios [] red = []
 amigosDeVarios [u] red = amigosDe red u
 amigosDeVarios (u:us) red = union (amigosDe red u) (amigosDeVarios us red)
 
+-- union recibe dos listas y devuelve su union, es decir, devuelve una lista con los elementos que estaban en cada lista
+-- sin repetidos.
+
 union :: (Eq t) => [t] -> [t] -> [t]
 union [] ys = ys
 union (x:xs) ys = union xs (agregar x ys)
+                  where agregar e l | pertenece e l = l
+                                    | otherwise = e:l
 
-agregar :: (Eq t) => t -> [t] -> [t]
-agregar e l | pertenece e l = l
-            | otherwise = e:l
-
--- relacionadosDirecto recibe dos usuarios de una red y devuelve True si ambos son amigos.
-
-relacionadosDirecto :: Usuario -> Usuario -> RedSocial -> Bool
-relacionadosDirecto u1 u2 red = pertenece u2 (amigosDe red u1) 
-
--- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista. (Como estoy trabajando con "conjuntos", cada elemento 
--- va a aparecer una vez en la lista.)
+-- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista.
 
 quitar :: (Eq t) => t -> [t] -> [t]
 quitar _ [] = []
 quitar y (x:xs) | x == y = xs
                 | otherwise = x: quitar y xs
 
+-- eliminarRelacionesDe recibe un usuario y una lista de relaciones y devuelve la lista de relacion sin 
+-- las relaciones donde aparece el usuario.
+
 eliminarRelacionesDe :: Usuario -> [Relacion] -> [Relacion]
 eliminarRelacionesDe _ [] = []
 eliminarRelacionesDe u ((u1,u2):rs) | u == u1 || u == u2 = eliminarRelacionesDe u rs
                                     | otherwise = (u1,u2): eliminarRelacionesDe u rs
+
+-- eliminarPublicacionesDe recibe un usuario, una lista de Publicaciones y una RedSocial, y devuelve la lista de publicaciones sin 
+-- las publicaciones de ese usuario en la red dada.
 
 eliminarPublicacionesDe :: Usuario -> [Publicacion] -> RedSocial -> [Publicacion]
 eliminarPublicacionesDe _ [] _ = []
 eliminarPublicacionesDe u (p:ps) red | pertenece p (publicacionesDe red u) = eliminarPublicacionesDe u ps red
                                      | otherwise = p: eliminarPublicacionesDe u ps red
 
+-- quitarDeLaRed recibe un usuario y una red social y devuelve la red social sin ese usario (lo elimina tanto a el como a sus publicaciones
+-- y a sus amigos). Aclaracion: no consideramos necesario eliminar sus likes de las publicaciones para el fin que le ibamos a dar a esta
+-- funcion.
+
 quitarDeLaRed :: Usuario -> RedSocial -> RedSocial
 quitarDeLaRed u (us, rs, ps) = (quitar u us, eliminarRelacionesDe u rs, eliminarPublicacionesDe u ps (us,rs,ps))
+
+-- quitarTodosDeLaRed recibe una lista de usuarios y una red social y devuelve la red social sin esos usarios.
 
 quitarTodosDeLaRed :: [Usuario] -> RedSocial -> RedSocial
 quitarTodosDeLaRed [] red = red
 quitarTodosDeLaRed (u:us) red = quitarTodosDeLaRed us (quitarDeLaRed u red)
-
-usuario1 = (1, "Juan")
-usuario2 = (2, "Natalia")
-usuario3 = (3, "Pedro")
-usuario4 = (4, "Mariela")
-usuario5 = (5, "Natalia")
-
-relacion1_2 = (usuario1, usuario2)
-relacion1_3 = (usuario1, usuario3)
-relacion1_4 = (usuario4, usuario1)
-relacion2_3 = (usuario3, usuario2)
-relacion2_4 = (usuario2, usuario4)
-relacion3_4 = (usuario4, usuario3)
-
-publicacion1_1 = (usuario1, "Este es mi primer post", [usuario2, usuario4])
-publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
-publicacion1_3 = (usuario1, "Este es mi tercer post", [usuario2, usuario5])
-publicacion1_4 = (usuario1, "Este es mi cuarto post", [])
-publicacion1_5 = (usuario1, "Este es como mi quinto post", [usuario5])
-
-publicacion2_1 = (usuario2, "Hello World", [usuario4])
-publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
-
-publicacion3_1 = (usuario3, "Lorem Ipsum", [])
-publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
-publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
-
-publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
-publicacion4_2 = (usuario4, "I am Bob", [])
-publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
-
-
-usuariosA = [usuario1, usuario2, usuario3, usuario4]
-relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
-publicacionesA = [publicacion1_1, publicacion1_2, publicacion2_1, publicacion2_2, publicacion3_1, publicacion3_2, publicacion4_1, publicacion4_2]
-redA = (usuariosA, relacionesA, publicacionesA)
-
-usuariosB = [usuario1, usuario2, usuario3, usuario5]
-relacionesB = [relacion1_2, relacion2_3]
-publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
-redB = (usuariosB, relacionesB, publicacionesB)
