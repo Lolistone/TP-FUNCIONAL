@@ -1,6 +1,6 @@
 -- Nombre de Grupo: HaskellyGretel
 -- Integrante 1: Lisandro Cordoba Lazzar, lisandrocordoba11@gmail.com, 327/23
--- Integrante 2: Nombre Apellido, email, LU
+-- Integrante 2: Lorenzo Martinelli, martinelli.lorenzo12@gmail.com , 364/23
 -- Integrante 3: Nombre Apellido, email, LU
 -- Integrante 4: Nombre Apellido, email, LU
 
