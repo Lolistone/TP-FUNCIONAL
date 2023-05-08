@@ -2,6 +2,7 @@ import Test.HUnit
 import Solucion
 
 main = runTestTT tests
+runAll = runTestTT testAll 
 
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
@@ -24,6 +25,31 @@ tests = test [
 
     " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
  ]
+
+-- Nuestros test suite para cada ejercicio.
+
+testNombresDeUsuarios = test []
+
+testAmigosDe = test []
+
+testCantidadDeAmigos = test []
+
+testUsuarioConMasAmigos = test []
+
+testEstaRobertoCarlos = test []
+
+testPublicacionesDe = test []
+
+testPublicacionesQueLeGustanA = test []
+
+testLesGustanLasMismasPublicaciones = test []
+
+testTieneUnSeguidorFiel = test []
+
+testExisteSecuenciaDeAmigos = test []
+
+testAll = test [testNombresDeUsuarios, testAmigosDe, testCantidadDeAmigos, testUsuarioConMasAmigos, testEstaRobertoCarlos, testPublicacionesDe,
+                testPublicacionesQueLeGustanA, testLesGustanLasMismasPublicaciones, testTieneUnSeguidorFiel, testExisteSecuenciaDeAmigos]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
 
@@ -69,3 +95,4 @@ usuariosB = [usuario1, usuario2, usuario3, usuario5]
 relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
+

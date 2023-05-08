@@ -1,3 +1,5 @@
+module Solucion where
+
 -- Nombre de Grupo: HaskellyGretel
 -- Integrante 1: Lisandro Cordoba Lazzaro, lisandrocordoba11@gmail.com, 327/23
 -- Integrante 2: Lorenzo Martinelli, martinelli.lorenzo12@gmail.com , 364/23
@@ -73,7 +75,7 @@ usuarioConMasAmigos (u1:u2:us, rs, ps) | (cantidadDeAmigos red u1) >= (cantidadD
 
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos ([], _, _) = False
-estaRobertoCarlos red = cantidadDeAmigos red (usuarioConMasAmigos red) > 1000000
+estaRobertoCarlos red = cantidadDeAmigos red (usuarioConMasAmigos red) > 10
 
 -- publicacionesDe recibe una redSocial válida y un usuario que pertenezca a ella, y devuelve una lista con sus publicaciones (En caso de haberlas,
 -- sino retorna la lista vacia.)
@@ -116,50 +118,6 @@ existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = existeSecuenciaDeAmigosAUX red [u1] u2
 
 -- Funciones auxiliares --
-
--- union recibe dos listas y devuelve su union, es decir, devuelve una lista con los elementos que estaban en cada lista
--- sin repetidos.
-
-union :: (Eq t) => [t] -> [t] -> [t]
-union [] ys = ys
-union (x:xs) ys = union xs (agregar x ys)
-                  where agregar e l | pertenece e l = l
-                                    | otherwise = e:l
-
--- pertenece recibe un elemento de tipo t y una lista de tipo t y devuelve True si este pertenece a la lista.
-
-pertenece :: (Eq t) => t -> [t] -> Bool
-pertenece _ [] = False
-pertenece e (x:xs) | e == x = True 
-                   | otherwise = pertenece e xs
-
--- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista.
-
-quitar :: (Eq t) => t -> [t] -> [t]
-quitar _ [] = []
-quitar y (x:xs) | x == y = xs
-                | otherwise = x: quitar y xs
-
--- longitud recibe una listaa y devuelve su longitud.
-
-longitud :: [t] -> Int
-longitud [] = 0
-longitud (x:xs) = 1 + longitud xs
-
--- sonIguales recibe dos conjuntos y devuelve True si son iguales, es decir, cumplen la doble inclusion.
--- Uso esta funcion puesto que no me importa el orden de la lista de publicaciones que devuelve publicacionesQueLeGustanA.
-
-sonIguales :: (Eq t) => [t] -> [t] -> Bool
-sonIguales xs ys = contenido xs ys && contenido ys xs
-
--- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys
-
-contenido :: (Eq t) => [t] -> [t] -> Bool
-contenido [] _ = True
-contenido (x:xs) ys | pertenece x ys = contenido xs ys
-                    | otherwise = False
-
--- Las siguientes funciones fueron definidas para el ejercicio 10.
 
 -- existeSecuenciaDeAmigosAUX es precisamente una funcion auxiliar para existeSecuenciaDeAmigos que recibe una RedSocial, una lista 
 -- de usuarios us y un usuario u2, y devuelve True si algun usuario de us forma una cadena de amigos con u2.
@@ -204,3 +162,46 @@ eliminarPublicacionesDe :: Usuario -> [Publicacion] -> RedSocial -> [Publicacion
 eliminarPublicacionesDe _ [] _ = []
 eliminarPublicacionesDe u (p:ps) red | pertenece p (publicacionesDe red u) = eliminarPublicacionesDe u ps red
                                      | otherwise = p: eliminarPublicacionesDe u ps red
+
+-- union recibe dos listas y devuelve su union, es decir, devuelve una lista con los elementos que estaban en cada lista
+-- sin repetidos.
+
+union :: (Eq t) => [t] -> [t] -> [t]
+union [] ys = ys
+union (x:xs) ys = union xs (agregar x ys)
+                  where agregar e l | pertenece e l = l
+                                    | otherwise = e:l
+
+-- pertenece recibe un elemento de tipo t y una lista de tipo t y devuelve True si este pertenece a la lista.
+
+pertenece :: (Eq t) => t -> [t] -> Bool
+pertenece _ [] = False
+pertenece e (x:xs) | e == x = True 
+                   | otherwise = pertenece e xs
+
+-- quitar recibe un elemento y una lista y saca la primera aparicion de este en la lista.
+
+quitar :: (Eq t) => t -> [t] -> [t]
+quitar _ [] = []
+quitar y (x:xs) | x == y = xs
+                | otherwise = x: quitar y xs
+
+-- longitud recibe una listaa y devuelve su longitud.
+
+longitud :: [t] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
+
+-- sonIguales recibe dos conjuntos y devuelve True si son iguales, es decir, cumplen la doble inclusion.
+-- Uso esta funcion puesto que no me importa el orden de la lista de publicaciones que devuelve publicacionesQueLeGustanA.
+
+sonIguales :: (Eq t) => [t] -> [t] -> Bool
+sonIguales xs ys = contenido xs ys && contenido ys xs
+
+-- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys
+
+contenido :: (Eq t) => [t] -> [t] -> Bool
+contenido [] _ = True
+contenido (x:xs) ys | pertenece x ys = contenido xs ys
+                    | otherwise = False
+
