@@ -1,7 +1,7 @@
 -- Nombre de Grupo: HaskellyGretel
 -- Integrante 1: Lisandro Cordoba Lazzaro, lisandrocordoba11@gmail.com, 327/23
 -- Integrante 2: Lorenzo Martinelli, martinelli.lorenzo12@gmail.com , 364/23
--- Integrante 3: Nombre Apellido, email, LU
+-- Integrante 3: Tiago Martin Guerra, tiagoguerra6@hotmail.com, 301/23
 -- Integrante 4: Nombre Apellido, email, LU
 
 type Usuario = (Integer, String) -- (id, nombre)
