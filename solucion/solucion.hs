@@ -1,7 +1,14 @@
+module Solucion where
+
 -- Nombre de Grupo: HaskellyGretel
 -- Integrante 1: Lisandro Cordoba Lazzaro, lisandrocordoba11@gmail.com, 327/23
+<<<<<<< HEAD:solucion/iap1-tp.hs
 -- Integrante 2: Nombre Apellido, email, LU
 -- Integrante 3: Nombre Apellido, email, LU
+=======
+-- Integrante 2: Lorenzo Martinelli, martinelli.lorenzo12@gmail.com , 364/23
+-- Integrante 3: Tiago Martin Guerra, tiagoguerra6@hotmail.com, 301/23
+>>>>>>> master:solucion/solucion.hs
 -- Integrante 4: Nombre Apellido, email, LU
 
 type Usuario = (Integer, String) -- (id, nombre)
@@ -32,6 +39,10 @@ usuarioDePublicacion (u, _, _) = u
 likesDePublicacion :: Publicacion -> [Usuario]
 likesDePublicacion (_, _, us) = us
 
+-- Ejercicios --
+
+-- Nota: las funciones auxiliares usadas estan al final, luego de los ejercicios.
+
 -- nombresDeUsuarios recibe una redSocial valida y devuelve una lista con los nombres de los usuarios de la red social 
 -- donde no hay repetidos, es decir, si dos usuarios se llaman carlitos en la lista aparecerá una sola vez "carlitos".
 
@@ -56,10 +67,6 @@ amigosDe (us, (r1,r2):rs, ps) u | r1 == u = r2: restoDeAmigos
 cantidadDeAmigos :: RedSocial -> Usuario -> Int
 cantidadDeAmigos red u = longitud (amigosDe red u)
 
-longitud :: [t] -> Int
-longitud [] = 0
-longitud (x:xs) = 1 + longitud xs
-
 -- usuarioConMasAmigos recibe una redSocial (válida y con al menos un usuario) y devuelve al usuario con mas amigos de la misma.
 -- Obs: Si hay 2 o mas usuarios con la misma cantidad de amigos la funcion va a devolver al primero de ellos que aparezca.
 
@@ -69,14 +76,13 @@ usuarioConMasAmigos (u1:u2:us, rs, ps) | (cantidadDeAmigos red u1) >= (cantidadD
                                        | otherwise = usuarioConMasAmigos (u2:us, rs, ps)
                                        where red = (u1:u2:us, rs, ps)
 
--- estaRobertoCarlos recibe una redSocial y devuelve True si hay un usuario con mas de 1 millon de amigos. Ademas, si se le pasa una red
--- sin usuarios devuelve False (Es necesario aclarar este caso pues usuarioConMasAmigos esta def. solo para redes con al menos 1 amigo)
+-- estaRobertoCarlos recibe una redSocial valida y devuelve True si hay un usuario que se relaciona con mas de 1 millon de usuarios.
 
 estaRobertoCarlos :: RedSocial -> Bool
 estaRobertoCarlos ([], _, _) = False
-estaRobertoCarlos red = cantidadDeAmigos red (usuarioConMasAmigos red) > 1000000
+estaRobertoCarlos red = cantidadDeAmigos red (usuarioConMasAmigos red) > 10
 
--- publicacionesDe recibe una redSocial y un usuario que pertenezca a ella, y devuelve una lista con sus publicaciones (En caso de haberlas,
+-- publicacionesDe recibe una redSocial válida y un usuario que pertenezca a ella, y devuelve una lista con sus publicaciones (En caso de haberlas,
 -- sino retorna la lista vacia.)
 
 publicacionesDe :: RedSocial -> Usuario -> [Publicacion]
@@ -84,7 +90,7 @@ publicacionesDe (_, _, []) _ = []
 publicacionesDe (us, rs, p:ps) u | (usuarioDePublicacion p) == u = p: (publicacionesDe (us, rs, ps) u)
                                  | otherwise = publicacionesDe (us, rs, ps) u 
 
--- publicacionesQueLeGustanA recibe una redSocial y un usuario que pertenece a esta y devuelve una lista con las publicaciones que le gustaron.
+-- publicacionesQueLeGustanA recibe una redSocial válida y un usuario válido que pertenece a esta y devuelve una lista con las publicaciones que le gustaron.
 -- En caso de que no le haya gustado ninguna devuelve la lista vacia.
 
 publicacionesQueLeGustanA :: RedSocial -> Usuario -> [Publicacion]
@@ -92,23 +98,11 @@ publicacionesQueLeGustanA (_, _, []) _ = []
 publicacionesQueLeGustanA (us, rs, p:ps) u | pertenece u (likesDePublicacion p) = p: (publicacionesQueLeGustanA (us, rs, ps) u)
                                            | otherwise = publicacionesQueLeGustanA (us, rs, ps) u 
 
--- lesGustanLasMismaPublicaciones recibe una redSocial y dos usuarios, devolviendo True si a ambos les gustan las mismas publicaciones.
+-- lesGustanLasMismaPublicaciones recibe una redSocial válida y dos usuarios válidos que pertenezcan a ella y,
+-- devuelve True si a ambos les gustan las mismas publicaciones.
 
 lesGustanLasMismasPublicaciones :: RedSocial -> Usuario -> Usuario -> Bool
 lesGustanLasMismasPublicaciones red u1 u2 = sonIguales (publicacionesQueLeGustanA red u1) (publicacionesQueLeGustanA red u2)
-
--- sonIguales recibe dos conjuntos y devuelve True si son iguales, es decir, cumplen la doble inclusion.
--- Uso esta funcion puesto que no me importa el orden de la lista de publicaciones que devuelve publicacionesQueLeGustanA.
-
-sonIguales :: (Eq t) => [t] -> [t] -> Bool
-sonIguales xs ys = contenido xs ys && contenido ys xs
-
--- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys
-
-contenido :: (Eq t) => [t] -> [t] -> Bool
-contenido [] _ = True
-contenido (x:xs) ys | pertenece x ys = contenido xs ys
-                    | otherwise = False
                      
 -- tieneUnSeguidorFiel recibe una redSocial y un usuario (u) de la misma y devuelve True si existe un usuario que le gusten todas las publicaciones de u
 -- en la red social dada. Ademas, u tiene que ser distinto de u1, es decir, no se puede ser su propio seguidor fiel.
@@ -128,6 +122,8 @@ tieneUnSeguidorFiel (u:us, rs, ps) u1 | contenido publicacionesU1 (publicaciones
 existeSecuenciaDeAmigos :: RedSocial -> Usuario -> Usuario -> Bool
 existeSecuenciaDeAmigos red u1 u2 = existeSecuenciaDeAmigosAUX red [u1] u2
 
+-- Funciones auxiliares --
+
 -- existeSecuenciaDeAmigosAUX es precisamente una funcion auxiliar para existeSecuenciaDeAmigos que recibe una RedSocial, una lista 
 -- de usuarios us y un usuario u2, y devuelve True si algun usuario de us forma una cadena de amigos con u2.
  
@@ -141,8 +137,36 @@ existeSecuenciaDeAmigosAUX red us u2 | pertenece u2 (amigosDeVarios us red) = Tr
 
 amigosDeVarios :: [Usuario] ->  RedSocial -> [Usuario]
 amigosDeVarios [] red = []
-amigosDeVarios [u] red = amigosDe red u
 amigosDeVarios (u:us) red = union (amigosDe red u) (amigosDeVarios us red)
+
+-- quitarTodosDeLaRed recibe una lista de usuarios y una RedSocial y devuelve la RedSocial sin esos usarios.
+
+quitarTodosDeLaRed :: [Usuario] -> RedSocial -> RedSocial
+quitarTodosDeLaRed [] red = red
+quitarTodosDeLaRed (u:us) red = quitarTodosDeLaRed us (quitarDeLaRed u red)
+
+-- quitarDeLaRed recibe un usuario y una RedSocial y devuelve esta misma sin ese usario (lo elimina tanto a el como a sus publicaciones
+-- y a sus amigos). Aclaracion: no consideramos necesario eliminar sus likes de las publicaciones para el fin que le ibamos a dar a esta
+-- funcion.
+
+quitarDeLaRed :: Usuario -> RedSocial -> RedSocial
+quitarDeLaRed u (us, rs, ps) = (quitar u us, eliminarRelacionesDe u rs, eliminarPublicacionesDe u ps (us,rs,ps))
+
+-- eliminarRelacionesDe recibe un usuario y una lista de relaciones y devuelve la lista de relacion sin 
+-- las relaciones donde aparece el usuario.
+
+eliminarRelacionesDe :: Usuario -> [Relacion] -> [Relacion]
+eliminarRelacionesDe _ [] = []
+eliminarRelacionesDe u ((u1,u2):rs) | u == u1 || u == u2 = eliminarRelacionesDe u rs
+                                    | otherwise = (u1,u2): eliminarRelacionesDe u rs
+
+-- eliminarPublicacionesDe recibe un usuario, una lista de Publicaciones y una RedSocial, y devuelve la lista de publicaciones sin 
+-- las publicaciones de ese usuario en la red dada.
+
+eliminarPublicacionesDe :: Usuario -> [Publicacion] -> RedSocial -> [Publicacion]
+eliminarPublicacionesDe _ [] _ = []
+eliminarPublicacionesDe u (p:ps) red | pertenece p (publicacionesDe red u) = eliminarPublicacionesDe u ps red
+                                     | otherwise = p: eliminarPublicacionesDe u ps red
 
 -- union recibe dos listas y devuelve su union, es decir, devuelve una lista con los elementos que estaban en cada lista
 -- sin repetidos.
@@ -167,31 +191,27 @@ quitar _ [] = []
 quitar y (x:xs) | x == y = xs
                 | otherwise = x: quitar y xs
 
--- eliminarRelacionesDe recibe un usuario y una lista de relaciones y devuelve la lista de relacion sin 
--- las relaciones donde aparece el usuario.
+-- longitud recibe una listaa y devuelve su longitud.
 
-eliminarRelacionesDe :: Usuario -> [Relacion] -> [Relacion]
-eliminarRelacionesDe _ [] = []
-eliminarRelacionesDe u ((u1,u2):rs) | u == u1 || u == u2 = eliminarRelacionesDe u rs
-                                    | otherwise = (u1,u2): eliminarRelacionesDe u rs
+longitud :: [t] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
 
--- eliminarPublicacionesDe recibe un usuario, una lista de Publicaciones y una RedSocial, y devuelve la lista de publicaciones sin 
--- las publicaciones de ese usuario en la red dada.
+-- sonIguales recibe dos conjuntos y devuelve True si son iguales, es decir, cumplen la doble inclusion.
+-- Uso esta funcion puesto que no me importa el orden de la lista de publicaciones que devuelve publicacionesQueLeGustanA.
 
-eliminarPublicacionesDe :: Usuario -> [Publicacion] -> RedSocial -> [Publicacion]
-eliminarPublicacionesDe _ [] _ = []
-eliminarPublicacionesDe u (p:ps) red | pertenece p (publicacionesDe red u) = eliminarPublicacionesDe u ps red
-                                     | otherwise = p: eliminarPublicacionesDe u ps red
+sonIguales :: (Eq t) => [t] -> [t] -> Bool
+sonIguales xs ys = contenido xs ys && contenido ys xs
 
--- quitarDeLaRed recibe un usuario y una red social y devuelve la red social sin ese usario (lo elimina tanto a el como a sus publicaciones
--- y a sus amigos). Aclaracion: no consideramos necesario eliminar sus likes de las publicaciones para el fin que le ibamos a dar a esta
--- funcion.
+-- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys
 
-quitarDeLaRed :: Usuario -> RedSocial -> RedSocial
-quitarDeLaRed u (us, rs, ps) = (quitar u us, eliminarRelacionesDe u rs, eliminarPublicacionesDe u ps (us,rs,ps))
+contenido :: (Eq t) => [t] -> [t] -> Bool
+contenido [] _ = True
+contenido (x:xs) ys | pertenece x ys = contenido xs ys
+                    | otherwise = False
 
--- quitarTodosDeLaRed recibe una lista de usuarios y una red social y devuelve la red social sin esos usarios.
-
-quitarTodosDeLaRed :: [Usuario] -> RedSocial -> RedSocial
-quitarTodosDeLaRed [] red = red
-quitarTodosDeLaRed (u:us) red = quitarTodosDeLaRed us (quitarDeLaRed u red)
+usuario1 = (1, "Juan")
+usuario2 = (2, "Natalia") -- EL REPETIDO
+usuario3 = (3, "Pedro")
+usuario4 = (4, "Mariela")
+usuario5 = (5, "Natalia") -- EL REPETIDO
