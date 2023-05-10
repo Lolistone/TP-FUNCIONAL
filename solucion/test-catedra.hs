@@ -101,6 +101,8 @@ relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
 
+
+
 -- Redes para 1) nombresDeUsuarios
 red1_1 = ([], [], [])
 red1_2 = ([usuario1], [], [])
