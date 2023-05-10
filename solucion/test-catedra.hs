@@ -2,7 +2,7 @@ import Test.HUnit
 import Solucion
 
 main = runTestTT tests
-runAll = runTestTT testAll 
+runAll = runTestTT testAll
 
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
@@ -28,7 +28,12 @@ tests = test [
 
 -- Nuestros test suite para cada ejercicio.
 
-testNombresDeUsuarios = test []
+testNombresDeUsuarios = test [
+    "Caso 1: Sin usuarios" ~: (nombresDeUsuarios red1_1) ~?= [],
+    "Caso 2: Único usuario" ~: (nombresDeUsuarios red1_2) ~?= [usuario1],
+    "Caso 3: Hay repetidos" ~: (nombresDeUsuarios red1_3) ~?= [usuario1, usuario2],
+    "Caso 4: Sin repetidos" ~: (nombresDeUsuarios red1_4) ~?= [usuario1, usuario2]
+]
 
 testAmigosDe = test []
 
@@ -56,10 +61,10 @@ expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show
 -- Ejemplos
 
 usuario1 = (1, "Juan")
-usuario2 = (2, "Natalia")
+usuario2 = (2, "Natalia") -- EL REPETIDO
 usuario3 = (3, "Pedro")
 usuario4 = (4, "Mariela")
-usuario5 = (5, "Natalia")
+usuario5 = (5, "Natalia") -- EL REPETIDO
 
 relacion1_2 = (usuario1, usuario2)
 relacion1_3 = (usuario1, usuario3)
@@ -95,3 +100,11 @@ usuariosB = [usuario1, usuario2, usuario3, usuario5]
 relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
+
+
+
+-- Redes para 1) nombresDeUsuarios
+red1_1 = ([], [], [])
+red1_2 = ([usuario1], [], [])
+red1_3 = ([usuario1, usuario2, usuario5], [], [])
+red1_4 = ([usuario1, usuario2], [], [])
