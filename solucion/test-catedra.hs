@@ -2,13 +2,17 @@ import Test.HUnit
 import Solucion
 
 main = runTestTT tests
--- runAll = runTestTT testAll 
 run1 = runTestTT testNombresDeUsuarios
 run2 = runTestTT testAmigosDe
 run3 = runTestTT testCantidadDeAmigos
 run4 = runTestTT testUsuarioConMasAmigos 
 run5 = runTestTT testEstaRobertoCarlos
 run6 = runTestTT testPublicacionesDe
+run7 = runTestTT testPublicacionesQueLeGustanA
+run8 = runTestTT testLesGustanLasMismasPublicaciones
+run9 = runTestTT testTieneUnSeguidorFiel
+run10 = runTestTT testExisteSecuenciaDeAmigos
+runAll = runTestTT testAll -- corre todos los casos inclusive los test provistos por la catedra
 
 tests = test [
     " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
@@ -76,17 +80,34 @@ testPublicacionesDe = test [
  ]
 
 testPublicacionesQueLeGustanA = test [
-
+    "Caso 1: unico usuario" ~: (publicacionesQueLeGustanA redUnica usuario1) ~?= [],
+    "Caso 2: mas de uno, no le gusta niguna" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
+    "Caso 3: mas de uno, le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
+    "Caso 4: mas de uno, le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
  ]
 
---testLesGustanLasMismasPublicaciones = test []
+testLesGustanLasMismasPublicaciones = test [
+    "Caso 1: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
+    "Caso 2: les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redRoberto usuario7 usuario8) ~?= True
+ ]
 
---testTieneUnSeguidorFiel = test []
+testTieneUnSeguidorFiel = test [
+    "Caso 1: una sola publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario5) ~?= False,
+    "Caso 2: una sola publicacion, hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario10) ~?= True,
+    "Caso 3: mas de una publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario11) ~?= False,
+    "Caso 4: mas de una publicacion, hay fiel" ~: (tieneUnSeguidorFiel redA usuario2) ~?= True
+ ]
 
---testExisteSecuenciaDeAmigos = test []
+testExisteSecuenciaDeAmigos = test [
+    "Caso 1: dos usuarios sin relacion" ~: (existeSecuenciaDeAmigos redD usuario1 usuario2) ~?= False,
+    "Caso 2: dos usuarios relacionados" ~: (existeSecuenciaDeAmigos redC usuario1 usuario2) ~?= True,
+    "Caso 3: mas de dos usuarios, no hay secuencia" ~: (existeSecuenciaDeAmigos redB usuario1 usuario5) ~?= False,
+    "Caso 4: mas de dos usuarios, existe secuencia, u1 relacionado con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario10) ~?= True,
+    "Caso 5: mas de dos usuarios, existe secuencia, u1 no se relaciona con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario7) ~?= True
+ ]
 
---testAll = test [testNombresDeUsuarios, testAmigosDe, testCantidadDeAmigos, testUsuarioConMasAmigos, testEstaRobertoCarlos, testPublicacionesDe,
---                testPublicacionesQueLeGustanA, testLesGustanLasMismasPublicaciones, testTieneUnSeguidorFiel, testExisteSecuenciaDeAmigos, tests]
+testAll = test [testNombresDeUsuarios, testAmigosDe, testCantidadDeAmigos, testUsuarioConMasAmigos, testEstaRobertoCarlos, testPublicacionesDe,
+                testPublicacionesQueLeGustanA, testLesGustanLasMismasPublicaciones, testTieneUnSeguidorFiel, testExisteSecuenciaDeAmigos, tests]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
 
@@ -140,7 +161,12 @@ publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
 publicacion4_2 = (usuario4, "I am Bob", [])
 publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
 
-publicacion10_1 = (usuario10, "gracias al fulbo", [usuario6, usuario7])
+publicacion5_1 = (usuario5, "Estoy testeando un programa", [])
+
+publicacion10_1 = (usuario10, "gracias al fulbo", [usuario6, usuario7, usuario8])
+
+publicacion11_1 = (usuario11, "Quisiera tener un millon de amigos", [usuario5])
+publicacion11_2 = (usuario11, "Soy Roberto", [usuario7, usuario8])
 
 usuariosA = [usuario1, usuario2, usuario3, usuario4]
 relacionesA = [relacion1_2, relacion1_4, relacion2_3, relacion2_4, relacion3_4]
@@ -165,7 +191,7 @@ redD = (usuariosD, relacionesD, publicacionesD)
 usuariosR = [usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11]
 relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion11_5, relacion11_6, relacion11_7, relacion11_8, relacion11_9,
                relacion11_10, relacion11_12]
-publicacionesR = [publicacion10_1]
+publicacionesR = [publicacion5_1, publicacion10_1, publicacion11_1, publicacion11_2]
 redRoberto = (usuariosR, relacionesR, publicacionesR)
 
 usuariosU = [usuario1]
