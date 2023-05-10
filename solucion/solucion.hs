@@ -36,7 +36,7 @@ likesDePublicacion (_, _, us) = us
 
 -- Ejercicios --
 
--- Nota: las funciones auxiliares usadas estan al final, luego de los ejercicios.
+-- Nota: las funciones auxiliares usadas estan definidas al final, despues de los ejercicios.
 
 -- nombresDeUsuarios recibe una redSocial valida y devuelve una lista con los nombres de los usuarios de la red social 
 -- donde no hay repetidos, es decir, si dos usuarios se llaman carlitos en la lista aparecerá una sola vez "carlitos".
