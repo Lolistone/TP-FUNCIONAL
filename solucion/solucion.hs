@@ -205,3 +205,8 @@ contenido [] _ = True
 contenido (x:xs) ys | pertenece x ys = contenido xs ys
                     | otherwise = False
 
+usuario1 = (1, "Juan")
+usuario2 = (2, "Natalia") -- EL REPETIDO
+usuario3 = (3, "Pedro")
+usuario4 = (4, "Mariela")
+usuario5 = (5, "Natalia") -- EL REPETIDO
