@@ -47,40 +47,45 @@ testNombresDeUsuarios = test [
 
 testAmigosDe = test [
     "Caso 1: un solo usuario" ~: (amigosDe redUnica usuario1) ~?= [],
-    "Caso 2: dos usuarios relacionados" ~: (amigosDe redC usuario1) ~?= [usuario2],
-    "Caso 3: dos usuarios sin relacion" ~: (amigosDe redD usuario1) ~?= [],
-    "Caso 4: varios usuarios, sin relacion" ~: (amigosDe redB usuario5) ~?= [],
-    "Caso 5: varios usuarios, varias relaciones" ~: (amigosDe redA usuario2) ~?= [usuario1, usuario3, usuario4],
-    "Caso 6: varios usuarios, unica relacion" ~: (amigosDe redB usuario1) ~?= [usuario2]
+    "Caso 2: dos usuarios, son amigos" ~: (amigosDe redC usuario1) ~?= [usuario2],
+    "Caso 3: dos usuarios, no son amigos" ~: (amigosDe redD usuario1) ~?= [],
+    "Caso 4: varios usuarios, el usuario no tiene amigos" ~: (amigosDe redB usuario5) ~?= [],
+    "Caso 5: varios usuarios, el usuario tiene mas de un amigo" ~: (amigosDe redA usuario2) ~?= [usuario1, usuario3, usuario4],
+    "Caso 6: varios usuarios, el usuario tiene un amigo" ~: (amigosDe redB usuario1) ~?= [usuario2]
  ]
 
 testCantidadDeAmigos = test [
-    "Caso 1: el usuario no tiene amigos" ~: (cantidadDeAmigos redB usuario5) ~?= 0,
-    "Caso 2: el usuario tiene 1 amigo" ~: (cantidadDeAmigos redB usuario1) ~?= 1,
-    "Caso 3: el usuario tiene varios amigos" ~: (cantidadDeAmigos redA usuario2) ~?= 3
+    "Caso 1: un solo usuario" ~: (cantidadDeAmigos redUnica usuario1) ~?= 0,
+    "Caso 2: varios usuarios, el usuario no tiene amigos" ~: (cantidadDeAmigos redB usuario5) ~?= 0,
+    "Caso 3: el usuario tiene 1 amigo" ~: (cantidadDeAmigos redB usuario1) ~?= 1,
+    "Caso 4: el usuario tiene varios amigos" ~: (cantidadDeAmigos redA usuario2) ~?= 3
  ]
 
 testUsuarioConMasAmigos = test [
     "Caso 1: un solo usuario" ~: (usuarioConMasAmigos redUnica) ~?= usuario1,
     "Caso 2: varios usuarios, uno con mas que el resto" ~: (usuarioConMasAmigos redB) ~?= usuario2,
-    "caso 3: varios usuarios, misma cantidad amigos" ~: expectAny (usuarioConMasAmigos redA) [usuario2, usuario4] 
+    "Caso 3: varios usuarios, misma cantidad amigos" ~: expectAny (usuarioConMasAmigos redC) [usuario1, usuario2],
+    "Caso 4: varios usuarios, ninguno tiene amigos" ~: expectAny (usuarioConMasAmigos redE) [usuario1, usuario2, usuario3]
  ]
 
 testEstaRobertoCarlos = test [
     "Caso 1: sin usuarios" ~: (estaRobertoCarlos redVacia) ~?= False,
-    "Caso 2: un usuario" ~: (estaRobertoCarlos redUnica) ~?= False,
-    "Caso 3: varios usuarios, todos menos de 10 amigos" ~: (estaRobertoCarlos redA) ~?= False,
-    "Caso 4: varios usuarios, esta Roberto Carlos!" ~: (estaRobertoCarlos redRoberto) ~?= True
+    "Caso 2: un solo usuario" ~: (estaRobertoCarlos redUnica) ~?= False,
+    "Caso 3: menos de 10 usuarios" ~: (estaRobertoCarlos redA) ~?= False,
+    "Caso 4: mas de 10 usuarios, alguno tiene mas de 10 amigos" ~: (estaRobertoCarlos redRoberto) ~?= True,
+    "Caso 5: mas de 10 usuarios, ninguno tiene mas de 10 amigos" ~: (estaRobertoCarlos redCasiRoberto) ~?= False
  ]
 
 testPublicacionesDe = test [
-    "Caso 1: ninguna publicacion" ~: (publicacionesDe redB usuario2) ~?= [],
-    "Caso 2: 1 publicacion" ~: (publicacionesDe redRoberto usuario10) ~?= [publicacion10_1],
-    "Caso 3: mas de una publicacion" ~: (publicacionesDe redA usuario1) ~?= [publicacion1_1, publicacion1_2]
+    "Caso 1: ninguna publicacion en la red" ~: (publicacionesDe redC usuario2) ~?= [],
+    "Caso 2: ninguna publicacion hecha por el usuario" ~: (publicacionesDe redB usuario2) ~?= [],
+    "Caso 3: una unica publicacion hecha por el usuario" ~: (publicacionesDe redRoberto usuario10) ~?= [publicacion10_1],
+    "Caso 4: mas de una publicacion hecha por el usuario" ~: (publicacionesDe redB usuario1) ~?= [publicacion1_3, publicacion1_4, publicacion1_5]
  ]
 
 testPublicacionesQueLeGustanA = test [
     "Caso 1: unico usuario" ~: (publicacionesQueLeGustanA redUnica usuario1) ~?= [],
+    
     "Caso 2: mas de uno, no le gusta niguna" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
     "Caso 3: mas de uno, le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
     "Caso 4: mas de uno, le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
@@ -194,9 +199,16 @@ relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion1
 publicacionesR = [publicacion5_1, publicacion10_1, publicacion11_1, publicacion11_2]
 redRoberto = (usuariosR, relacionesR, publicacionesR)
 
+redCasiRoberto = (usuariosR, relacionesB, publicacionesR)
+
 usuariosU = [usuario1]
 relacionesU = []
 publicacionesU = []
 redUnica = (usuariosU, relacionesU, publicacionesU)
 
 redVacia = ([], [], [])
+
+usuariosE = [usuario1, usuario2, usuario3]
+relacionesE = []
+publicacionesE = []
+redE = (usuariosE, relacionesE, publicacionesE)
