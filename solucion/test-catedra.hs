@@ -84,12 +84,11 @@ testPublicacionesDe = test [
  ]
 
 testPublicacionesQueLeGustanA = test [
-    "Caso 1: unico usuario" ~: (publicacionesQueLeGustanA redUnica usuario1) ~?= [],
-    
-    "Caso 2: mas de uno, no le gusta niguna" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
-    "Caso 3: mas de uno, le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
-    "Caso 4: mas de uno, le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
- ]
+    "Caso 1: no hay publicaciones" ~: (publicacionesQueLeGustanA redC usuario1) ~?= [],    
+    "Caso 2: no le gusta ninguna publicacion" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
+    "Caso 3: le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
+    "Caso 4: le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
+ ]       ACLARARRRRRR
 
 testLesGustanLasMismasPublicaciones = test [
     "Caso 1: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
