@@ -88,7 +88,10 @@ testPublicacionesQueLeGustanA = test [
     "Caso 2: no le gusta ninguna publicacion" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
     "Caso 3: le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
     "Caso 4: le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
- ]       ACLARARRRRRR
+ ]  
+
+-- El enunciado menciona que un usuario no puede darse like a si mismo, pues solo puede dar like a sus amigos y no puede ser amigo de si mismo,
+-- sin embargo, en la especificacion no aclara que no pueda darse like a si mismo. Por lo tanto, nuestra implementacion cubre tal caso.
 
 testLesGustanLasMismasPublicaciones = test [
     "Caso 1: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
@@ -192,6 +195,11 @@ relacionesD = []
 publicacionesD = []
 redD = (usuariosD, relacionesD, publicacionesD)
 
+usuariosE = [usuario1, usuario2, usuario3]
+relacionesE = []
+publicacionesE = []
+redE = (usuariosE, relacionesE, publicacionesE)
+
 usuariosR = [usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11]
 relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion11_5, relacion11_6, relacion11_7, relacion11_8, relacion11_9,
                relacion11_10, relacion11_12]
@@ -207,7 +215,3 @@ redUnica = (usuariosU, relacionesU, publicacionesU)
 
 redVacia = ([], [], [])
 
-usuariosE = [usuario1, usuario2, usuario3]
-relacionesE = []
-publicacionesE = []
-redE = (usuariosE, relacionesE, publicacionesE)
