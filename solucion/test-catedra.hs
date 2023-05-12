@@ -192,7 +192,7 @@ publicacion5_1 = (usuario5, "Estoy testeando un programa", [])
 publicacion5_2 = (usuario5, "Mi 1er autolike", [usuario5])
 publicacion5_3 = (usuario5, "Mi 2do autolike", [usuario5])
 
-publicacion10_1 = (usuario10, "gracias al fulbo", [usuario6, usuario7, usuario8])
+publicacion10_1 = (usuario10, "fulbo", [usuario6, usuario7, usuario8])
 
 publicacion11_1 = (usuario11, "Quisiera tener un millon de amigos", [usuario5])
 publicacion11_2 = (usuario11, "Soy Roberto", [usuario7, usuario8])
