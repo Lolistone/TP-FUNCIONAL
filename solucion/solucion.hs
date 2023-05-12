@@ -128,7 +128,7 @@ existeSecuenciaDeAmigosAUX (_, [], _) us u2 = False
 existeSecuenciaDeAmigosAUX red us u2 | pertenece u2 (amigosDeVarios us red) = True
                                      | otherwise = existeSecuenciaDeAmigosAUX (quitarTodosDeLaRed us red) (amigosDeVarios us red) u2
 
--- amigosDeVarios recibe una lista de usuarios us y una redSocial y devuelve una lista con todos los amigos de los ususarios pertenecientes a us. 
+-- amigosDeVarios recibe una lista de usuarios us y una redSocial y devuelve una lista con todos los amigos de los usuarios pertenecientes a us. 
 
 amigosDeVarios :: [Usuario] ->  RedSocial -> [Usuario]
 amigosDeVarios [] red = []
@@ -192,13 +192,12 @@ longitud :: [t] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
--- sonIguales recibe dos conjuntos y devuelve True si son iguales, es decir, cumplen la doble inclusion.
--- Uso esta funcion puesto que no me importa el orden de la lista de publicaciones que devuelve publicacionesQueLeGustanA.
+-- sonIguales recibe dos listas y devuelve True si tienen los mismos elementos, no importa el orden.
 
 sonIguales :: (Eq t) => [t] -> [t] -> Bool
 sonIguales xs ys = contenido xs ys && contenido ys xs
 
--- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys
+-- contenido recibe dos conjuntos xs e ys y devuelve True si xs esta contenido en ys.
 
 contenido :: (Eq t) => [t] -> [t] -> Bool
 contenido [] _ = True

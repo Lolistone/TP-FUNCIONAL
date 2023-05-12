@@ -87,7 +87,8 @@ testPublicacionesQueLeGustanA = test [
     "Caso 1: no hay publicaciones" ~: (publicacionesQueLeGustanA redC usuario1) ~?= [],    
     "Caso 2: no le gusta ninguna publicacion" ~: (publicacionesQueLeGustanA redB usuario3) ~?= [],
     "Caso 3: le gusta una" ~: (publicacionesQueLeGustanA redRoberto usuario6) ~?= [publicacion10_1],
-    "Caso 4: le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3]
+    "Caso 4: le gustan varias" ~: (publicacionesQueLeGustanA redB usuario5) ~?= [publicacion1_3, publicacion1_5, publicacion3_3],
+    "Caso 5: like a si mismo" ~: (publicacionesQueLeGustanA redE usuario3) ~?= [publicacion3_4]
  ]  
 
 -- El enunciado menciona que un usuario no puede darse like a si mismo, pues solo puede dar like a sus amigos y no puede ser amigo de si mismo,
@@ -95,14 +96,17 @@ testPublicacionesQueLeGustanA = test [
 
 testLesGustanLasMismasPublicaciones = test [
     "Caso 1: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
-    "Caso 2: les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redRoberto usuario7 usuario8) ~?= True
+    "Caso 2: les gustan las mismas (Al menos dieron un like)" ~: (lesGustanLasMismasPublicaciones redRoberto usuario7 usuario8) ~?= True,
+    "Caso 3: A ninguno le gusta niguna"  ~: (lesGustanLasMismasPublicaciones redRoberto usuario1 usuario2) ~?= True
  ]
 
 testTieneUnSeguidorFiel = test [
-    "Caso 1: una sola publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario5) ~?= False,
-    "Caso 2: una sola publicacion, hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario10) ~?= True,
-    "Caso 3: mas de una publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario11) ~?= False,
-    "Caso 4: mas de una publicacion, hay fiel" ~: (tieneUnSeguidorFiel redA usuario2) ~?= True
+    "Caso 1: Un usuario en la red"  ~: (tieneUnSeguidorFiel redUnica usuario1) ~?= False,
+    "Caso 2: El usuario no tiene publicaciones"  ~: (tieneUnSeguidorFiel redRoberto usuario6) ~?= False,
+    "Caso 3: una sola publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario5) ~?= False,
+    "Caso 4: una sola publicacion, hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario10) ~?= True,
+    "Caso 5: mas de una publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario11) ~?= False,
+    "Caso 6: mas de una publicacion, hay fiel" ~: (tieneUnSeguidorFiel redA usuario2) ~?= True
  ]
 
 testExisteSecuenciaDeAmigos = test [
@@ -139,6 +143,9 @@ relacion1_4 = (usuario4, usuario1) -- Notar que el orden en el que aparecen los 
 relacion2_3 = (usuario3, usuario2)
 relacion2_4 = (usuario2, usuario4)
 relacion3_4 = (usuario4, usuario3)
+relacion6_10 = (usuario10, usuario6) 
+relacion7_10 = (usuario10, usuario7) 
+relacion8_10 = (usuario10, usuario8) 
 relacion11_1 = (usuario11, usuario1) 
 relacion11_2 = (usuario11, usuario2)
 relacion11_3 = (usuario11, usuario3)
@@ -163,6 +170,7 @@ publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
 publicacion3_1 = (usuario3, "Lorem Ipsum", [])
 publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
 publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
+publicacion3_4 = (usuario3, "Autolike", [usuario2, usuario3])
 
 publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
 publicacion4_2 = (usuario4, "I am Bob", [])
@@ -185,6 +193,8 @@ relacionesB = [relacion1_2, relacion2_3]
 publicacionesB = [publicacion1_3, publicacion1_4, publicacion1_5, publicacion3_1, publicacion3_2, publicacion3_3]
 redB = (usuariosB, relacionesB, publicacionesB)
 
+-- Redes definidas para los test suite
+
 usuariosC = [usuario1, usuario2]
 relacionesC = [relacion1_2]
 publicacionesC = []
@@ -197,12 +207,12 @@ redD = (usuariosD, relacionesD, publicacionesD)
 
 usuariosE = [usuario1, usuario2, usuario3]
 relacionesE = []
-publicacionesE = []
+publicacionesE = [publicacion3_4]
 redE = (usuariosE, relacionesE, publicacionesE)
 
 usuariosR = [usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11]
 relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion11_5, relacion11_6, relacion11_7, relacion11_8, relacion11_9,
-               relacion11_10, relacion11_12]
+               relacion11_10, relacion11_12, relacion6_10, relacion7_10, relacion8_10]
 publicacionesR = [publicacion5_1, publicacion10_1, publicacion11_1, publicacion11_2]
 redRoberto = (usuariosR, relacionesR, publicacionesR)
 
