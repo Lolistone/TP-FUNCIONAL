@@ -216,7 +216,7 @@ relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion1
 publicacionesR = [publicacion5_1, publicacion10_1, publicacion11_1, publicacion11_2]
 redRoberto = (usuariosR, relacionesR, publicacionesR)
 
-redCasiRoberto = (usuariosR, relacionesB, publicacionesR)
+redCasiRoberto = (usuariosR, relacionesB, []) 
 
 usuariosU = [usuario1]
 relacionesU = []
