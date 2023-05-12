@@ -41,9 +41,11 @@ tests = test [
 testNombresDeUsuarios = test [
     "Caso 1: un solo usuario" ~: (nombresDeUsuarios redUnica) ~?= ["Juan"],
     "Caso 2: usuarios disintos" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
-    "Caso 3: usuarios repetidos" ~: (nombresDeUsuarios redB) ~?= ["Juan", "Pedro", "Natalia"],
+    "Caso 3: usuarios repetidos" ~: (nombresDeUsuarios redB) ~?= ["Juan", "Pedro", "Natalia"], -- (1)
     "Caso 4: sin usuarios" ~: (nombresDeUsuarios redVacia) ~?= []
  ]
+
+-- (1) Orden elegido arbitrariamente, pues con expectAny deberiamos haber tipeado 6 posibilidades.
 
 testAmigosDe = test [
     "Caso 1: un solo usuario" ~: (amigosDe redUnica usuario1) ~?= [],
@@ -222,6 +224,11 @@ relacionesE = []
 publicacionesE = [publicacion3_4]
 redE = (usuariosE, relacionesE, publicacionesE)
 
+usuariosF = [usuario1, usuario2, usuario3, usuario4, usuario5]
+relacionesF = [relacion2_4, relacion1_4]
+publicacionesF = [publicacion1_6, publicacion2_1, publicacion3_1, publicacion3_5, publicacion5_2, publicacion5_3, publicacion4_1, publicacion4_4]
+redF = (usuariosF, relacionesF, publicacionesF)
+
 usuariosR = [usuario1, usuario2, usuario3, usuario4, usuario5, usuario6, usuario7, usuario8, usuario9, usuario10, usuario11]
 relacionesR = [relacion11_1, relacion11_2, relacion11_3, relacion11_4, relacion11_5, relacion11_6, relacion11_7, relacion11_8, relacion11_9,
                relacion11_10, relacion11_12, relacion6_10, relacion7_10, relacion8_10]
@@ -234,13 +241,6 @@ usuariosU = [usuario1]
 relacionesU = []
 publicacionesU = []
 redUnica = (usuariosU, relacionesU, publicacionesU)
-
-
-usuariosF = [usuario1, usuario2, usuario3, usuario4, usuario5]
-relacionesF = [relacion2_4, relacion1_4]
-publicacionesF = [publicacion1_6, publicacion2_1, publicacion3_1, publicacion3_5, publicacion5_2, publicacion5_3, publicaciones4_1, publicaciones4_4]
-redF = (usuariosF, relacionesF, publicacionesF)
-
 
 redVacia = ([], [], [])
 
