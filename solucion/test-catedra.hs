@@ -91,30 +91,37 @@ testPublicacionesQueLeGustanA = test [
     "Caso 5: like a si mismo" ~: (publicacionesQueLeGustanA redE usuario3) ~?= [publicacion3_4]
  ]  
 
--- El enunciado menciona que un usuario no puede darse like a si mismo, pues solo puede dar like a sus amigos y no puede ser amigo de si mismo,
--- sin embargo, en la especificacion no aclara que no pueda darse like a si mismo. Por lo tanto, nuestra implementacion cubre tal caso.
+-- El enunciado menciona que un usuario no puede darse like a si mismo, pues solo puede dar like a sus amigos y no puede ser su propio amigo.
+-- Sin embargo, en la especificacion no aclara que no pueda dar like a su propia publicacion. Por lo tanto, nuestra implementacion cubre tal caso.
 
 testLesGustanLasMismasPublicaciones = test [
-    "Caso 1: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
-    "Caso 2: les gustan las mismas (Al menos dieron un like)" ~: (lesGustanLasMismasPublicaciones redRoberto usuario7 usuario8) ~?= True,
-    "Caso 3: A ninguno le gusta niguna"  ~: (lesGustanLasMismasPublicaciones redRoberto usuario1 usuario2) ~?= True
+    "Caso 1: no hay publicaciones" ~: (lesGustanLasMismasPublicaciones redC usuario1 usuario2) ~?= True,
+    "Caso 2: no les gustan las mismas" ~: (lesGustanLasMismasPublicaciones redB usuario2 usuario5) ~?= False,
+    "Caso 3: les gustan las mismas (Al menos dieron un like)" ~: (lesGustanLasMismasPublicaciones redRoberto usuario7 usuario8) ~?= True,
+    "Caso 4: a ninguno le gusta niguna" ~: (lesGustanLasMismasPublicaciones redRoberto usuario1 usuario2) ~?= True
  ]
 
 testTieneUnSeguidorFiel = test [
-    "Caso 1: Un usuario en la red"  ~: (tieneUnSeguidorFiel redUnica usuario1) ~?= False,
-    "Caso 2: El usuario no tiene publicaciones"  ~: (tieneUnSeguidorFiel redRoberto usuario6) ~?= False,
-    "Caso 3: una sola publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario5) ~?= False,
-    "Caso 4: una sola publicacion, hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario10) ~?= True,
-    "Caso 5: mas de una publicacion, no hay fiel" ~: (tieneUnSeguidorFiel redRoberto usuario11) ~?= False,
-    "Caso 6: mas de una publicacion, hay fiel" ~: (tieneUnSeguidorFiel redA usuario2) ~?= True
+    "Caso 1: un usuario en la red" ~: (tieneUnSeguidorFiel redUnica usuario1) ~?= False,
+    "Caso 2: el usuario no tiene publicaciones" ~: (tieneUnSeguidorFiel redRoberto usuario6) ~?= False,
+    "Caso 3: una sola publicacion, no hay likes" ~: (tieneUnSeguidorFiel redRoberto usuario5) ~?= False,
+    "Caso 4: una sola publicacion, solo like propio" ~: (tieneUnSeguidorFiel redF usuario1) ~?= False,
+    "Caso 5: una sola publicacion, hay mas de un fiel" ~: (tieneUnSeguidorFiel redRoberto usuario10) ~?= True,
+    "Caso 6: una sola publicacion, hay un solo fiel" ~: (tieneUnSeguidorFiel redF usuario2) ~?= True,
+    "Caso 7: mas de una publicacion, no hay likes" ~: (tieneUnSeguidorFiel redF usuario3) ~?= False,
+    "Caso 8: mas de una publicacion, hay likes pero no hay fiel" ~: (tieneUnSeguidorFiel redA usuario4) ~?= False,
+    "Caso 9: mas de una publicacion, solo likes propios" ~: (tieneUnSeguidorFiel redF usuario5) ~?= False,
+    "Caso 10: mas de una publicacion, hay un solo fiel" ~: (tieneUnSeguidorFiel redA usuario2) ~?= True,
+    "Caso 11: mas de una publicacion, hay mas de un fiel" ~: (tieneUnSeguidorFiel redF usuario4) ~?= True
  ]
 
 testExisteSecuenciaDeAmigos = test [
     "Caso 1: dos usuarios sin relacion" ~: (existeSecuenciaDeAmigos redD usuario1 usuario2) ~?= False,
     "Caso 2: dos usuarios relacionados" ~: (existeSecuenciaDeAmigos redC usuario1 usuario2) ~?= True,
-    "Caso 3: mas de dos usuarios, no hay secuencia" ~: (existeSecuenciaDeAmigos redB usuario1 usuario5) ~?= False,
-    "Caso 4: mas de dos usuarios, existe secuencia, u1 relacionado con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario10) ~?= True,
-    "Caso 5: mas de dos usuarios, existe secuencia, u1 no se relaciona con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario7) ~?= True
+    "Caso 3: mas de dos usuarios, no hay ninguna relacion" ~: (existeSecuenciaDeAmigos redE usuario1 usuario3) ~?= False,
+    "Caso 4: mas de dos usuarios, hay relaciones pero no hay cadena de amigos" ~: (existeSecuenciaDeAmigos redB usuario1 usuario5) ~?= False,
+    "Caso 5: mas de dos usuarios, existe cadena de amigos, u1 relacionado con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario11) ~?= True,
+    "Caso 6: mas de dos usuarios, existe cadena de amigos pero u1 no se relaciona con u2" ~: (existeSecuenciaDeAmigos redRoberto usuario1 usuario7) ~?= True
  ]
 
 testAll = test [testNombresDeUsuarios, testAmigosDe, testCantidadDeAmigos, testUsuarioConMasAmigos, testEstaRobertoCarlos, testPublicacionesDe,
@@ -163,6 +170,7 @@ publicacion1_2 = (usuario1, "Este es mi segundo post", [usuario4])
 publicacion1_3 = (usuario1, "Este es mi tercer post", [usuario2, usuario5])
 publicacion1_4 = (usuario1, "Este es mi cuarto post", [])
 publicacion1_5 = (usuario1, "Este es como mi quinto post", [usuario5])
+publicacion1_6 = (usuario1, "Esta me la likeo yo", [usuario1])
 
 publicacion2_1 = (usuario2, "Hello World", [usuario4])
 publicacion2_2 = (usuario2, "Good Bye World", [usuario1, usuario4])
@@ -171,12 +179,16 @@ publicacion3_1 = (usuario3, "Lorem Ipsum", [])
 publicacion3_2 = (usuario3, "dolor sit amet", [usuario2])
 publicacion3_3 = (usuario3, "consectetur adipiscing elit", [usuario2, usuario5])
 publicacion3_4 = (usuario3, "Autolike", [usuario2, usuario3])
+publicacion3_5 = (usuario3, "2da publicacion sin likes", [])
 
 publicacion4_1 = (usuario4, "I am Alice. Not", [usuario1, usuario2])
 publicacion4_2 = (usuario4, "I am Bob", [])
 publicacion4_3 = (usuario4, "Just kidding, i am Mariela", [usuario1, usuario3])
+publicacion4_4 = (usuario4, "estoy contento, mas de un fiel!", [usuario1, usuario2])
 
 publicacion5_1 = (usuario5, "Estoy testeando un programa", [])
+publicacion5_2 = (usuario5, "Mi 1er autolike", [usuario5])
+publicacion5_3 = (usuario5, "Mi 2do autolike", [usuario5])
 
 publicacion10_1 = (usuario10, "gracias al fulbo", [usuario6, usuario7, usuario8])
 
@@ -222,6 +234,13 @@ usuariosU = [usuario1]
 relacionesU = []
 publicacionesU = []
 redUnica = (usuariosU, relacionesU, publicacionesU)
+
+
+usuariosF = [usuario1, usuario2, usuario3, usuario4, usuario5]
+relacionesF = [relacion2_4, relacion1_4]
+publicacionesF = [publicacion1_6, publicacion2_1, publicacion3_1, publicacion3_5, publicacion5_2, publicacion5_3, publicaciones4_1, publicaciones4_4]
+redF = (usuariosF, relacionesF, publicacionesF)
+
 
 redVacia = ([], [], [])
 
