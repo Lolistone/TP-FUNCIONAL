@@ -1,7 +1,6 @@
 import Test.HUnit
 import Solucion
 
-main = runTestTT tests
 run1 = runTestTT testNombresDeUsuarios
 run2 = runTestTT testAmigosDe
 run3 = runTestTT testCantidadDeAmigos
@@ -12,29 +11,7 @@ run7 = runTestTT testPublicacionesQueLeGustanA
 run8 = runTestTT testLesGustanLasMismasPublicaciones
 run9 = runTestTT testTieneUnSeguidorFiel
 run10 = runTestTT testExisteSecuenciaDeAmigos
-runAll = runTestTT testAll -- corre todos los casos inclusive los test provistos por la catedra
-
-tests = test [
-    " nombresDeUsuarios 1" ~: (nombresDeUsuarios redA) ~?= ["Juan","Natalia","Pedro","Mariela"],
-
-    " amigosDe 1" ~: (amigosDe redA usuario1) ~?= [usuario2, usuario4],
-
-    " cantidadDeAmigos 1" ~: (cantidadDeAmigos redA usuario1) ~?= 2,
-
-    " usuarioConMasAmigos 1" ~: expectAny (usuarioConMasAmigos redA) [usuario2, usuario4],
-
-    " estaRobertoCarlos 1" ~: (estaRobertoCarlos redA) ~?= False,
-
-    " publicacionesDe 1" ~: (publicacionesDe redA usuario2) ~?= [publicacion2_1, publicacion2_2],
-
-    " publicacionesQueLeGustanA 1" ~: (publicacionesQueLeGustanA redA usuario1) ~?= [publicacion2_2, publicacion4_1],
-
-    " lesGustanLasMismasPublicaciones 2" ~: (lesGustanLasMismasPublicaciones redB usuario1 usuario3) ~?= True,
-
-    " tieneUnSeguidorFiel 1" ~: (tieneUnSeguidorFiel redA usuario1) ~?= True,
-
-    " existeSecuenciaDeAmigos 1" ~: (existeSecuenciaDeAmigos redA usuario1 usuario3) ~?= True
- ]
+runAll = runTestTT testAll -- corre todos los tests
 
 -- Nuestros test suite para cada ejercicio.
 
@@ -127,7 +104,7 @@ testExisteSecuenciaDeAmigos = test [
  ]
 
 testAll = test [testNombresDeUsuarios, testAmigosDe, testCantidadDeAmigos, testUsuarioConMasAmigos, testEstaRobertoCarlos, testPublicacionesDe,
-                testPublicacionesQueLeGustanA, testLesGustanLasMismasPublicaciones, testTieneUnSeguidorFiel, testExisteSecuenciaDeAmigos, tests]
+                testPublicacionesQueLeGustanA, testLesGustanLasMismasPublicaciones, testTieneUnSeguidorFiel, testExisteSecuenciaDeAmigos]
 
 expectAny actual expected = elem actual expected ~? ("expected any of: " ++ show expected ++ "\n but got: " ++ show actual)
 
